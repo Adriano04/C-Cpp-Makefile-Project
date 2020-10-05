@@ -16,6 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cleandepw command to clean all dependency files.
 ## [1.1.1] - 2020-10-05
 ### Changed
- - Dpenedency files organized into folder.
+ - Dependency files organized into folder.
 ### Added
  - Compiled file is generated with the parent folder name.
