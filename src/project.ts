@@ -13,6 +13,7 @@ class Project {
     private ext: string;
     srcDir: string;
     objDir: string;
+    depDir: string;
     isSimple: boolean;
 
     constructor(language: Language, 
@@ -32,10 +33,11 @@ class Project {
                 throw new Error('Language not supported!');
         }
         if (isSimple) {
-            this.srcDir = this.objDir = '.';
+            this.srcDir = this.objDir = this.depDir = '.';
         } else {
             this.srcDir = 'src';
             this.objDir = 'obj';
+            this.depDir = 'dep';
         }
         this.isSimple = isSimple;
     }
@@ -51,15 +53,16 @@ CXXFLAGS = -std=${this.std} -Wall
 LDFLAGS = 
 
 # Makefile settings - Can be customized.
-APPNAME = myapp
+APPNAME = $(shell basename $(CURDIR))
 EXT = ${this.ext}
 SRCDIR = ${this.srcDir}
 OBJDIR = ${this.objDir}
+DEPDIR = ${this.depDir}
 
 ############## Do not change anything from here downwards! #############
 SRC = $(wildcard $(SRCDIR)/*$(EXT))
 OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=%.d)
+DEP = $(OBJ:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
 # UNIX-based OS variables & settings
 RM = rm
 DELOBJ = $(OBJ)
@@ -135,6 +138,7 @@ export function createProject(language: Language, isSimple: boolean): boolean {
     } else {
         let srcDir = path.join(cwd, project.srcDir);
         let objDir = path.join(cwd, project.objDir);
+        let depDir = path.join(cwd, project.depDir);
         if (!fs.existsSync(srcDir)) {
             let incDir = path.join(srcDir, 'include');
             fs.mkdirSync(srcDir);
@@ -142,6 +146,7 @@ export function createProject(language: Language, isSimple: boolean): boolean {
         }
         if (!fs.existsSync(objDir)) {
             fs.mkdirSync(objDir);
+            fs.mkdirSync(depDir);
         }
         createMakefile(project, cwd);
     }
